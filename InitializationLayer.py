@@ -30,15 +30,16 @@ class InitializationLayer(nn.Module):
         lstm_output = lstm_output.unsqueeze(2)
 
         # apply pooling
-        pooled_output = self.pool(lstm_output.permute(1, 2, 0))
+        pooled_output = self.pool(lstm_output)
 
-        # flatten pooled output
+        # add the batch dimension
+        # pooled_output = pooled_output.squeeze()
         pooled_output = pooled_output.view(-1, 128 * 2)
 
-        # pass through fully connected layer
-        logits = self.fc(pooled_output)
+
+        out = self.fc(pooled_output)
 
         # apply softmax activation
-        probs = self.softmax(logits)
+        out = self.softmax(out)
 
-        return probs
+        return out
