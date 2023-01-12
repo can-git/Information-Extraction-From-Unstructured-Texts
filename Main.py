@@ -18,8 +18,8 @@ def train(model, train_data, val_data):
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
 
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=p.LR)
+    criterion = nn.NLLLoss()
+    optimizer = optim.RMSprop(model.parameters(), lr=p.LR)
 
     if use_cuda:
         model = model.cuda()
@@ -30,7 +30,7 @@ def train(model, train_data, val_data):
         total_acc_train = 0
         total_loss_train = 0
 
-        for train_input, train_label in tqdm(train_dataloader):
+        for train_input, train_label in train_dataloader:
             train_label = train_label.to(device)
             mask = train_input['attention_mask'].to(device)
             input_id = train_input['input_ids'].squeeze(1).to(device)
@@ -38,7 +38,7 @@ def train(model, train_data, val_data):
             output = model(input_id, mask)
             # output = model(input_id)
 
-            batch_loss = criterion(output, train_label)
+            batch_loss = criterion(output, train_label.long())
             total_loss_train += batch_loss.item()
 
             acc = (output.argmax(dim=1) == train_label).sum().item()
@@ -76,7 +76,7 @@ def train(model, train_data, val_data):
 def evaluate(model, test_data):
     test = TextDataset(test_data, False)
 
-    test_dataloader = torch.utils.data.DataLoader(test, batch_size=1)
+    test_dataloader = torch.utils.data.DataLoader(test, batch_size=p.BATCH_SIZE)
 
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")

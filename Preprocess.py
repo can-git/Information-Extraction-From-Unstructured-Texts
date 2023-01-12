@@ -8,6 +8,8 @@ from transformers import BertTokenizer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import Properties as p
+from nltk import pos_tag
+from nltk.stem import PorterStemmer
 
 
 class Preprocess():
@@ -27,15 +29,22 @@ class Preprocess():
                        'G4': 3
                        }
 
-        self.df_train, self.df_val = train_test_split(df, test_size=0.1, random_state=1)
+        self.df_train, self.df_val = train_test_split(df, test_size=0.3, random_state=1)
+        self.df_val, self.df_test2 = train_test_split(self.df_val, test_size=0.5, random_state=1)
 
     def transform(self, df):
-
+        stemmer = PorterStemmer()
         punctuation = """!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"""
 
-        df["pathology_report_text"] = df["pathology_report_text"].apply(lambda x: re.sub(f"[{punctuation}]", "", x))
+        # df["pathology_report_text"] = df["pathology_report_text"].apply(lambda x: re.sub(f"[{punctuation}]", " ", x))
+        # df['pathology_report_text'] = df['pathology_report_text'].apply(lambda x: ' '.join([stemmer.stem(word) for word in x.split()]))
+        # df.drop_duplicates(subset=["pathology_report_text"], keep='first')
+
+        # df["tags"] = df["pathology_report_text"].apply(lambda x: pos_tag(x.split()))
+        # pos_to_remove = ['VBN', 'VBZ', 'RB', 'VBD', 'IN', 'VBP', 'MD']
+        # df["pathology_report_text"] = df["tags"].apply(lambda x: [word for word, pos in x if pos not in pos_to_remove])
 
         return df
 
     def getItem(self):
-        return self.df_train, self.df_val, self.df_test
+        return self.df_train, self.df_val, self.df_test2
