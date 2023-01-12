@@ -36,13 +36,15 @@ class Preprocess():
         stemmer = PorterStemmer()
         punctuation = """!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"""
 
-        # df["pathology_report_text"] = df["pathology_report_text"].apply(lambda x: re.sub(f"[{punctuation}]", " ", x))
-        # df['pathology_report_text'] = df['pathology_report_text'].apply(lambda x: ' '.join([stemmer.stem(word) for word in x.split()]))
+        df["pathology_report_text"] = df["pathology_report_text"].apply(lambda x: re.sub(f"[{punctuation}]", " ", x))
+        df['pathology_report_text'] = df['pathology_report_text'].apply(lambda x: ' '.join([stemmer.stem(word) for word in x.split()]))
         # df.drop_duplicates(subset=["pathology_report_text"], keep='first')
 
-        # df["tags"] = df["pathology_report_text"].apply(lambda x: pos_tag(x.split()))
-        # pos_to_remove = ['VBN', 'VBZ', 'RB', 'VBD', 'IN', 'VBP', 'MD']
-        # df["pathology_report_text"] = df["tags"].apply(lambda x: [word for word, pos in x if pos not in pos_to_remove])
+        df["tags"] = df["pathology_report_text"].apply(lambda x: pos_tag(x.split()))
+
+        pos_to_remove = ['NN', 'JJ', 'CD']
+
+        df["pathology_report_text"] = df["tags"].apply(lambda x: [word for word, pos in x if pos in pos_to_remove])
 
         return df
 
