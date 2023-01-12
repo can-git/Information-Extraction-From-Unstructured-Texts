@@ -17,6 +17,7 @@ from PIL import Image
 import Properties as p
 import nltk
 from BertClassifier import BertClassifier
+from InitializationLayer import InitializationLayer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 
@@ -32,10 +33,10 @@ df_test = pd.merge(test_patients, reports_tsv, on="pateint_id")
 
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
-labels = {'G0': 0,
-          'G1': 1,
-          'G2': 2,
-          'G3': 3
+labels = {'G1': 0,
+          'G2': 1,
+          'G3': 2,
+          'G4': 3
           }
 
 
@@ -83,8 +84,8 @@ df_train, df_val = train_test_split(df, test_size=0.1, random_state=1)
 def train(model, train_data, val_data, learning_rate, epochs):
     train, val = TextDataset(train_data, True), TextDataset(val_data, True)
 
-    train_dataloader = torch.utils.data.DataLoader(train, batch_size=4, shuffle=True)
-    val_dataloader = torch.utils.data.DataLoader(val, batch_size=4)
+    train_dataloader = torch.utils.data.DataLoader(train, batch_size=p.BATCH_SIZE, shuffle=True)
+    val_dataloader = torch.utils.data.DataLoader(val, batch_size=p.BATCH_SIZE)
 
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
@@ -102,13 +103,15 @@ def train(model, train_data, val_data, learning_rate, epochs):
         total_loss_train = 0
 
         for train_input, train_label in train_dataloader:
+            train_label = torch.randint(0, 2, (p.BATCH_SIZE,))
             train_label = train_label.to(device)
             mask = train_input['attention_mask'].to(device)
             input_id = train_input['input_ids'].squeeze(1).to(device)
 
             output = model(input_id, mask)
+            # output = model(input_id)
 
-            batch_loss = criterion(output, train_label.long())
+            batch_loss = criterion(output, train_label)
             total_loss_train += batch_loss.item()
 
             acc = (output.argmax(dim=1) == train_label).sum().item()
@@ -144,7 +147,8 @@ def train(model, train_data, val_data, learning_rate, epochs):
 
 
 EPOCHS = p.EPOCHS
-model = BertClassifier()
+# model = BertClassifier()
+model = InitializationLayer()
 LR = p.LR
 
 train(model, df_train, df_val, LR, EPOCHS)

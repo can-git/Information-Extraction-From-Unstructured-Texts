@@ -29,12 +29,6 @@ class BertClassifier(nn.Module):
         # linear_output = self.linear(lstm_output[:, -1])
         # final_layer = self.softmax(linear_output)
 
-        encoded_layers, pooled_output = self.bert(input_ids=input_id, attention_mask=mask, return_dict=False)
-        encoded_layers = encoded_layers.permute(1, 0, 2)
-        enc_hiddens, (last_hidden, last_cell) = self.LSTM(pack_padded_sequence(encoded_layers, inputs[2]))
-        output_hidden = torch.cat((last_hidden[0], last_hidden[1]), dim=1)
-        output_hidden = F.dropout(output_hidden, 0.2)
-        output = self.clf(output_hidden)
 
         return self.softmax(output)
 
