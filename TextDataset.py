@@ -14,7 +14,7 @@ import Properties as p
 class TextDataset(torch.utils.data.Dataset):
 
     def __init__(self, df, train):
-        tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
+        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         ls = []
         if train:
             for rows in df.values:
@@ -24,10 +24,11 @@ class TextDataset(torch.utils.data.Dataset):
         else:
             ls = np.random.randint(4, size=len(df))
 
-        self.labels = ls
+        self.labels = df.iloc[:, 1:5].values
         self.texts = [tokenizer(text,
                                 padding='max_length', max_length=512, truncation=True,
                                 return_tensors="pt") for text in df['pathology_report_text']]
+        self.ids = [text for text in df['pateint_id']]
 
     def classes(self):
         return self.labels
@@ -43,9 +44,14 @@ class TextDataset(torch.utils.data.Dataset):
         # Fetch a batch of inputs
         return self.texts[idx]
 
+    def get_batch_ids(self, idx):
+        # Fetch a batch of inputs
+        return self.ids[idx]
+
     def __getitem__(self, idx):
 
         batch_texts = self.get_batch_texts(idx)
         batch_y = self.get_batch_labels(idx)
+        batch_ids = self.get_batch_ids(idx)
 
-        return batch_texts, batch_y
+        return batch_ids, batch_texts, batch_y

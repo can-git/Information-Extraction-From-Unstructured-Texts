@@ -169,6 +169,8 @@ atlassian-ide-plugin.xml
 
 # SonarLint plugin
 .idea/sonarlint/
+model.pt
+can_yilmaz_assignment_3.csv
 
 # Crashlytics plugin (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml
