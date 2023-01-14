@@ -15,12 +15,14 @@ class InitializationLayer(nn.Module):
 
         # fully connected layer
         self.fc = nn.Linear(128 * 2, 128)
-        self.fc2 = nn.Linear(128, 32)
-        self.fc3 = nn.Linear(32, 4)
+        self.fc2 = nn.Linear(128, 64)
+        self.fc3 = nn.Linear(64, 32)
+        self.fc4 = nn.Linear(32, 16)
+        self.fc5 = nn.Linear(16, 4)
 
         # softmax activation function
         self.softmax = nn.Softmax(dim=1)
-        self.dropout = nn.Dropout(0.1)
+        self.dropout = nn.Dropout(0.2)
         self.relu = nn.ReLU()
 
     def forward(self, input_ids, attention_mask):
@@ -40,9 +42,15 @@ class InitializationLayer(nn.Module):
 
         out = self.fc(out)
         out = self.relu(out)
+        out = self.dropout(out)
         out = self.fc2(out)
         out = self.relu(out)
+        out = self.dropout(out)
         out = self.fc3(out)
+        out = self.relu(out)
+        out = self.fc4(out)
+        out = self.relu(out)
+        out = self.fc5(out)
 
         # apply softmax activation
         out = self.softmax(out)

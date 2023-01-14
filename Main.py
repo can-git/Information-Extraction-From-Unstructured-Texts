@@ -61,7 +61,7 @@ def train(model, train_data, val_data, criterion, optimizer):
 
                 output = model(input_id, mask)
 
-                batch_loss = criterion(torch.log(torch.softmax(output, dim=1)), val_label.argmax(dim=1))
+                batch_loss = criterion(torch.log(output), val_label.argmax(dim=1))
                 total_loss_val += batch_loss.item()
 
                 acc = (output.argmax(dim=1) == val_label.argmax(dim=1)).sum().item() / len(output.argmax(dim=1))
@@ -106,11 +106,11 @@ def evaluate(model, test_data, criterion):
             predicted_ids.append("".join(test_ids))
             predicted_values.append(output.cpu().detach().numpy())
 
-            batch_loss = abs(criterion(output, test_label.long()))
-            total_loss_test += batch_loss.item()
+            # batch_loss = abs(criterion(output, test_label.long()))
+            # total_loss_test += batch_loss.item()
 
-            acc = (output.argmax(dim=1) == test_label).sum().item()
-            total_acc_test += acc
+            # acc = (output.argmax(dim=1) == test_label).sum().item()
+            # total_acc_test += acc
 
     df = pd.concat([pd.DataFrame(i) for i in predicted_values], ignore_index=True)
 
@@ -121,8 +121,8 @@ def evaluate(model, test_data, criterion):
                            "likelihood_G4": df.iloc[:, 3]})
     new_df.to_csv("can_yilmaz_assignment_3.csv", index=False)
 
-    print(
-        f' Test Loss: {total_loss_test / len(test_data): .3f} | Test Accuracy: {total_acc_test / len(test_data): .3f}')
+    # print(
+    #     f' Test Loss: {total_loss_test / len(test_data): .3f} | Test Accuracy: {total_acc_test / len(test_data): .3f}')
     # print(f'Test Accuracy: {total_acc_test / len(test_data): .3f}')
 
 
@@ -132,9 +132,8 @@ df_train, df_val, df_test = Preprocess().getItem()
 model = InitializationLayer()
 
 criterion = nn.NLLLoss(reduction='mean')
-optimizer = optim.Adam(model.parameters(), lr=p.LR, weight_decay=1e-2)
-
+optimizer = optim.Adam(model.parameters(), lr=p.LR)
 train(model, df_train, df_val, criterion, optimizer)
 
-model.load_state_dict(torch.load('model.pt'))
+# model.load_state_dict(torch.load('model.pt'))
 # evaluate(model, df_test, criterion)

@@ -17,14 +17,15 @@ class TextDataset(torch.utils.data.Dataset):
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         ls = []
         if train:
-            for rows in df.values:
-                for i, cols in enumerate(rows[1:5]):
-                    if cols == 1:
-                        ls.append(i)
+            # for rows in df.values:
+            #     for i, cols in enumerate(rows[1:5]):
+            #         if cols == 1:
+            #             ls.append(i)
+            ls = df.iloc[:, 1:5].values
         else:
             ls = np.random.randint(4, size=len(df))
 
-        self.labels = df.iloc[:, 1:5].values
+        self.labels = ls
         self.texts = [tokenizer(text,
                                 padding='max_length', max_length=512, truncation=True,
                                 return_tensors="pt") for text in df['pathology_report_text']]
