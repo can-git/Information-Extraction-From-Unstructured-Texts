@@ -1,7 +1,7 @@
 BATCH_SIZE = 1
 EPOCHS = 20
 LR = 0.000008
-WD = 1e-2
+WD = 25e-2
 GAMMA = 1e-1
 STEP_SIZE = 1
 DEVICE = "cuda"

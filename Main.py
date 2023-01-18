@@ -5,7 +5,6 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import ConcatDataset
 import Properties as p
-from InitializationLayer import InitializationLayer
 from BertClassifier import BertClassifier
 from tqdm import tqdm
 from TextDataset import TextDataset
@@ -13,15 +12,14 @@ from Preprocess import Preprocess
 
 
 def train(model, train_data, val_data, criterion, optimizer):
-    train, val = TextDataset(train_data, True) , TextDataset(val_data, True)
+    # train = TextDataset(train_data, True)
+    train, val = TextDataset(train_data, True), TextDataset(val_data, True)
 
     train_dataloader = torch.utils.data.DataLoader(train, batch_size=p.BATCH_SIZE, shuffle=True, pin_memory=True)
     val_dataloader = torch.utils.data.DataLoader(val, batch_size=p.BATCH_SIZE, pin_memory=True)
 
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
-
-
 
     if use_cuda:
         model = model.cuda()
@@ -38,7 +36,6 @@ def train(model, train_data, val_data, criterion, optimizer):
             input_id = train_input['input_ids'].squeeze(1).to(device)
 
             output = model(input_id, mask)
-            # output = model(input_id)
 
             batch_loss = criterion(torch.log(output), train_label.argmax(dim=1))
             total_loss_train += batch_loss.item()
@@ -69,8 +66,8 @@ def train(model, train_data, val_data, criterion, optimizer):
                 total_acc_val += acc
 
         # print(
-        #     f'Epochs: {epoch_num + 1} | Train Loss: {total_loss_train / p.BATCH_SIZE: .5f} \
-        #         | Train Accuracy: {total_acc_train / len(train_data): .5f}')
+        #     f'Epochs: {epoch_num + 1} | Train Loss: {total_loss_train / len(train_dataloader): .5f} \
+        #         | Train Accuracy: {total_acc_train / len(train_dataloader): .5f}')
         print(
             f'Epochs: {epoch_num + 1} | Train Loss: {total_loss_train / len(train_dataloader): .5f} \
                         | Train Accuracy: {total_acc_train / len(train_dataloader): .5f} \
@@ -107,12 +104,6 @@ def evaluate(model, test_data, criterion):
             predicted_ids.append("".join(test_ids))
             predicted_values.append(output.cpu().detach().numpy())
 
-            # batch_loss = abs(criterion(output, test_label.long()))
-            # total_loss_test += batch_loss.item()
-
-            # acc = (output.argmax(dim=1) == test_label).sum().item()
-            # total_acc_test += acc
-
     df = pd.concat([pd.DataFrame(i) for i in predicted_values], ignore_index=True)
 
     new_df = pd.DataFrame({"pateint_id": predicted_ids,
@@ -122,18 +113,11 @@ def evaluate(model, test_data, criterion):
                            "likelihood_G4": df.iloc[:, 3]})
     new_df.to_csv("can_yilmaz_assignment_3.csv", index=False)
 
-    # print(
-    #     f' Test Loss: {total_loss_test / len(test_data): .3f} | Test Accuracy: {total_acc_test / len(test_data): .3f}')
-    # print(f'Test Accuracy: {total_acc_test / len(test_data): .3f}')
-
-
 df_train, df_val, df_test = Preprocess().getItem()
 
-
-# model = InitializationLayer()
 model = BertClassifier()
 
-criterion = nn.CrossEntropyLoss()
+criterion = nn.NLLLoss()
 optimizer = optim.Adam(model.parameters(), lr=p.LR)
 train(model, df_train, df_val, criterion, optimizer)
 

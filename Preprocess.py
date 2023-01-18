@@ -35,7 +35,7 @@ class Preprocess:
                        'G4': 3
                        }
 
-        self.df_train, self.df_val = train_test_split(df, test_size=0.25, random_state=1)
+        self.df_train, self.df_val = train_test_split(df, test_size=0.25, random_state=56)
         # self.df_val, self.df_test2 = train_test_split(self.df_val, test_size=0.5, random_state=1)
 
     def transform(self, df):
