@@ -6,6 +6,7 @@ import torch.optim as optim
 from torch.utils.data import ConcatDataset
 import Properties as p
 from InitializationLayer import InitializationLayer
+from BertClassifier import BertClassifier
 from tqdm import tqdm
 from TextDataset import TextDataset
 from Preprocess import Preprocess
@@ -129,9 +130,10 @@ def evaluate(model, test_data, criterion):
 df_train, df_val, df_test = Preprocess().getItem()
 
 
-model = InitializationLayer()
+# model = InitializationLayer()
+model = BertClassifier()
 
-criterion = nn.NLLLoss(reduction='mean')
+criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=p.LR)
 train(model, df_train, df_val, criterion, optimizer)
 
