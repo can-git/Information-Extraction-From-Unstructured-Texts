@@ -108,7 +108,7 @@ def evaluate(model, test_data):
                            "likelihood_G2": df.iloc[:, 1],
                            "likelihood_G3": df.iloc[:, 2],
                            "likelihood_G4": df.iloc[:, 3]})
-    new_df.to_csv("can_yilmaz_assignment_3.csv", index=False)
+    new_df.to_csv("can_yilmaz_assignment.csv", index=False)
 
 
 df_train, df_val, df_test = Preprocess().getItem()
