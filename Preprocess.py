@@ -39,6 +39,7 @@ class Preprocess:
         # self.df_val, self.df_test2 = train_test_split(self.df_val, test_size=0.5, random_state=1)
 
     def transform(self, df):
+        nltk.download('stopwords')
         stemmer = PorterStemmer()
         punctuation = """!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"""
         stop = stopwords.words('english')
@@ -54,26 +55,6 @@ class Preprocess:
 
         return df
 
-    # def replace(self, df):
-    #     column_name = 'pathology_report_text'
-    #     replace_prob = 0.1
-    #     tokenizer = BertTokenizer.from_pretrained(p.BERT_NAME)
-    #     vocab = tokenizer.get_vocab()
-    #
-    #     for i, row in df.iterrows():
-    #
-    #         tokenized_text = tokenizer.tokenize(row[column_name])
-    #
-    #         for i, token in enumerate(tokenized_text):
-    #             if np.random.rand() < replace_prob:
-    #
-    #                 tokenized_text[i] = random.choice(list(vocab.keys()))
-    #
-    #         modified_text = tokenizer.convert_tokens_to_string(tokenized_text)
-    #
-    #         df.at[i, column_name] = modified_text
-    #
-    #     return df
 
     def getItem(self):
         # return self.df, self.df_test,
