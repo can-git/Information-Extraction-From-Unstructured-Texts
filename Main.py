@@ -21,8 +21,9 @@ def train(model, train_data, val_data, criterion, optimizer):
     device = torch.device("cuda" if use_cuda else "cpu")
 
     if use_cuda:
-        model = model.cuda()
-        criterion = criterion.cuda()
+        model = nn.DataParallel(model, device_ids=[0])
+        model.to(device)
+        model.train()
 
     for epoch_num in range(p.EPOCHS):
 
@@ -120,3 +121,4 @@ train(model, df_train, df_val, criterion, optimizer)
 
 # model.load_state_dict(torch.load('model.pt'))  # Uncommenting for trying model to get csv
 # evaluate(model, df_test)
+
