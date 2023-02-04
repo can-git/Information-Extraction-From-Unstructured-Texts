@@ -54,29 +54,26 @@ class Preprocess:
 
         return df
 
-    def replace(self, df):
-        column_name = 'pathology_report_text'
-        replace_prob = 0.1
-        tokenizer = BertTokenizer.from_pretrained(p.BERT_NAME)
-        vocab = tokenizer.get_vocab()
-        # Iterate over the rows of the dataframe
-        for i, row in df.iterrows():
-            # Tokenize the text in the selected column
-            tokenized_text = tokenizer.tokenize(row[column_name])
-
-            # Iterate over the tokenized text and randomly replace tokens
-            for i, token in enumerate(tokenized_text):
-                if np.random.rand() < replace_prob:
-                    # Replace the token with a random token from the vocabulary
-                    tokenized_text[i] = random.choice(list(vocab.keys()))
-
-            # Convert the tokenized text back to a string
-            modified_text = tokenizer.convert_tokens_to_string(tokenized_text)
-
-            # Update the value of the selected column with the modified text
-            df.at[i, column_name] = modified_text
-
-        return df
+    # def replace(self, df):
+    #     column_name = 'pathology_report_text'
+    #     replace_prob = 0.1
+    #     tokenizer = BertTokenizer.from_pretrained(p.BERT_NAME)
+    #     vocab = tokenizer.get_vocab()
+    #
+    #     for i, row in df.iterrows():
+    #
+    #         tokenized_text = tokenizer.tokenize(row[column_name])
+    #
+    #         for i, token in enumerate(tokenized_text):
+    #             if np.random.rand() < replace_prob:
+    #
+    #                 tokenized_text[i] = random.choice(list(vocab.keys()))
+    #
+    #         modified_text = tokenizer.convert_tokens_to_string(tokenized_text)
+    #
+    #         df.at[i, column_name] = modified_text
+    #
+    #     return df
 
     def getItem(self):
         # return self.df, self.df_test,

@@ -6,13 +6,12 @@ import torch.optim as optim
 from torch.utils.data import ConcatDataset
 import Properties as p
 from BertClassifier import BertClassifier
-from tqdm import tqdm
 from TextDataset import TextDataset
 from Preprocess import Preprocess
 
 
 def train(model, train_data, val_data, criterion, optimizer):
-    # train = TextDataset(train_data, True)
+
     train, val = TextDataset(train_data, True), TextDataset(val_data, True)
 
     train_dataloader = torch.utils.data.DataLoader(train, batch_size=p.BATCH_SIZE, shuffle=True, pin_memory=True)
@@ -77,7 +76,7 @@ def train(model, train_data, val_data, criterion, optimizer):
         torch.save(model.state_dict(), 'model.pt')
 
 
-def evaluate(model, test_data, criterion):
+def evaluate(model, test_data):
     test = TextDataset(test_data, False)
 
     test_dataloader = torch.utils.data.DataLoader(test, batch_size=1)
@@ -88,14 +87,11 @@ def evaluate(model, test_data, criterion):
     if use_cuda:
         model = model.cuda()
 
-    total_acc_test = 0
-    total_loss_test = 0
     predicted_values = []
     predicted_ids = []
     with torch.no_grad():
 
-        for test_ids, test_input, test_label in test_dataloader:
-            test_label = test_label.to(device)
+        for test_ids, test_input, _ in test_dataloader:
             mask = test_input['attention_mask'].to(device)
             input_id = test_input['input_ids'].squeeze(1).to(device)
 
@@ -113,6 +109,7 @@ def evaluate(model, test_data, criterion):
                            "likelihood_G4": df.iloc[:, 3]})
     new_df.to_csv("can_yilmaz_assignment_3.csv", index=False)
 
+
 df_train, df_val, df_test = Preprocess().getItem()
 
 model = BertClassifier()
@@ -121,5 +118,5 @@ criterion = nn.NLLLoss()
 optimizer = optim.Adam(model.parameters(), lr=p.LR)
 train(model, df_train, df_val, criterion, optimizer)
 
-# model.load_state_dict(torch.load('model.pt'))
-# evaluate(model, df_test, criterion)
+# model.load_state_dict(torch.load('model.pt'))  # Uncommenting for trying model to get csv
+# evaluate(model, df_test)

@@ -17,10 +17,6 @@ class TextDataset(torch.utils.data.Dataset):
         tokenizer = BertTokenizer.from_pretrained(p.BERT_NAME)
         ls = []
         if train:
-            # for rows in df.values:
-            #     for i, cols in enumerate(rows[1:5]):
-            #         if cols == 1:
-            #             ls.append(i)
             ls = df.iloc[:, 1:5].values
         else:
             ls = np.random.randint(4, size=len(df))
@@ -40,15 +36,12 @@ class TextDataset(torch.utils.data.Dataset):
         return len(self.labels)
 
     def get_batch_labels(self, idx):
-        # Fetch a batch of labels
         return np.array(self.labels[idx])
 
     def get_batch_texts(self, idx):
-        # Fetch a batch of inputs
         return self.texts[idx]
 
     def get_batch_ids(self, idx):
-        # Fetch a batch of inputs
         return self.ids[idx]
 
     def __getitem__(self, idx):
