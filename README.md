@@ -41,18 +41,13 @@ transformers
 
 A proposed dataset can be achieved from [Kaggle](https://www.kaggle.com/competitions/bau-ari5004-fall22-a3/data).
 
-After downloading, dataset must be in the specific format as below:
+After downloading, dataset must be inside of the "data" folder as below:
 
 ```
 data
     │
     ├── data.tsv
-    │
-    ├── sample_submission.csv
-    │
-    ├── test.csv
-    │
-    └── train.csv
+    ...
 ```
 
 ## Additional Details
@@ -63,47 +58,55 @@ likelihood_G3, and likelihood_G4. Please see the sample_submission.csv for the s
 
 
 ## Hyperparameters
-Models' important parameters can be adjusted from the terminal or Main.py file as default.
+Models' important parameters can be adjusted from the Proporties.py file.
 
 ```
 Options:
-  --name TEXT            Name of the model. (cnn8, resnet18 or densenet121)
-  --batch_size INTEGER   Batch Size
-  --num_workers INTEGER  Num Workers
-  --epochs INTEGER       Epochs
-  --lr FLOAT             Learning Rate
-  --wd INTEGER           Weight Decay
-  --gamma FLOAT          Gamma
-  --save BOOLEAN   Save Model at the end
-  --im_size INTEGER      Image Size
+    -BATCH_SIZE = 4
+    -EPOCHS = 20
+    -LR = 0.000008
+    -WD = 25e-2
+    -GAMMA = 1e-1
+    -STEP_SIZE = 1
+    -DEVICE = "cuda"
+    -SEED = 1
+    -LOG_INTERVAL = 10
+    -SAVE_MODEL = True
+    -DEFAULT_PATH = "data"
+    -DEFAULT_PATH_DATA = "data/data.tsv"
+    -DEFAULT_PATH_SAMPLE = "data/sample_submission.csv"
+    -DEFAULT_PATH_TEST = "data/test.csv"
+    -DEFAULT_PATH_TRAIN = "data/train.csv"
+    -BERT_NAME = "dmis-lab/biobert-v1.1"
 ```
 
-## Training
+## Train and Evaluating
 
-To train the model, run this command or with the desired parameters as "--name":
+To train the model, the following code in the Main.py file should be as shown:
 
-```train
-python Main.py --name <modelname>
+```python
+model = BertClassifier()
+criterion = nn.NLLLoss()
+optimizer = optim.Adam(model.parameters(), lr=p.LR)
+train(model, df_train, df_val, criterion, optimizer)
+
+# model.load_state_dict(torch.load('model.pt'))
+# evaluate(model, df_test)
 ```
-This will create a Results folder, and model will be saved by the name value in the Folder.
-<br />*Currently a few models are supported(cnn8, resnet18 and densenet121)*
 
-## Evaluation
+To evaluate the model:
 
-To evaluate model with lung dataset, ".pt" file should be as in the example:
+```python
+model = BertClassifier()
+criterion = nn.NLLLoss()
+optimizer = optim.Adam(model.parameters(), lr=p.LR)
+# train(model, df_train, df_val, criterion, optimizer)
 
-```results
-Results
-       │
-       └── <modelname>
-                      └── <modelname>_model.pt
+model.load_state_dict(torch.load('model.pt'))
+evaluate(model, df_test)
 ```
-If the format is as above, then the code below will work successfully.
 
-```eval
-python Evaluation.py --name <modelname>
-```
-This will save some metric result images in the Results folder.
+The evaluate function creates a csv file as requested on the [Kaggle](https://www.kaggle.com/competitions/bau-ari5004-fall22-a3/overview/evaluation) website.
 
 ## Results
 
