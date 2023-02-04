@@ -85,9 +85,6 @@ Options:
 To train the model, the following code in the Main.py file should be as shown:
 
 ```python
-model = BertClassifier()
-criterion = nn.NLLLoss()
-optimizer = optim.Adam(model.parameters(), lr=p.LR)
 train(model, df_train, df_val, criterion, optimizer)
 
 # model.load_state_dict(torch.load('model.pt'))
@@ -97,9 +94,6 @@ train(model, df_train, df_val, criterion, optimizer)
 To evaluate the model:
 
 ```python
-model = BertClassifier()
-criterion = nn.NLLLoss()
-optimizer = optim.Adam(model.parameters(), lr=p.LR)
 # train(model, df_train, df_val, criterion, optimizer)
 
 model.load_state_dict(torch.load('model.pt'))
@@ -110,14 +104,10 @@ The evaluate function creates a csv file as requested on the [Kaggle](https://ww
 
 ## Results
 
-Our models achieve the following performances on :
-
-
-## Problems :exclamation:
-There is a Data Leakage in the proposed dataset! :smiling_face_with_tear: Therefore all the results are useless.
+The required CSV file can be accessed from the "results/" folder. The result is a negative log likelihood score of 0.16081. The leaderboard on the Kaggle site is as follows:
+[Kaggle for Course ARI5004](https://www.kaggle.com/competitions/bau-ari5004-fall22-a3/leaderboard),
+[Kaggle for Course AIN2001](https://www.kaggle.com/competitions/bau-ain2001-fall22-a4/leaderboard),
 
 ## Contributing
 This project is prepared for the ARI5004 (Deep Learning) course at Bahçeşehir University. 
 Thank you to my professor Mustafa Umit Oner for all the achievements.
-
-Dataset and idea is borrowed from [Deepslide](https://github.com/BMIRDS/deepslide), Thanks for their excellent work!
