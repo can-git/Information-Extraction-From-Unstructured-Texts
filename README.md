@@ -107,6 +107,7 @@ The evaluate function creates a csv file as requested on the [Kaggle](https://ww
 The required CSV file can be accessed from the "results/" folder. The result is a negative log likelihood score of 0.16081. The leaderboard on the Kaggle site is as follows:
 [Kaggle for Course ARI5004](https://www.kaggle.com/competitions/bau-ari5004-fall22-a3/leaderboard),
 [Kaggle for Course AIN2001](https://www.kaggle.com/competitions/bau-ain2001-fall22-a4/leaderboard),
+According to the Leaderboard section of these competitions, 0.16081 ranks as number 2 out of 36 projects.
 
 ## Contributing
 This project is prepared for the ARI5004 (Deep Learning) course at Bahçeşehir University. 
